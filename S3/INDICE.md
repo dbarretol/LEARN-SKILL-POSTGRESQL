@@ -1,60 +1,217 @@
-**Esquema de Títulos y Subtítulos Basado en la Gestión Avanzada de Bases de Datos PostgreSQL**
+# Esquema de Contenidos: Gestión Avanzada de Bases de Datos con PostgreSQL
 
-**I. Introducción a Funcionalidades Avanzadas de PostgreSQL**
+## I. Introducción a Funcionalidades Avanzadas de PostgreSQL
 
-*   Tercera sesión del curso de gestión de base de datos PostgreSQL.
-*   Necesidad de implementar transacciones y control de concurrencia para una ejecución correcta.
+- Contexto de la **tercera sesión** del curso de PostgreSQL.
+- Motivación:
+  - Necesidad de **transacciones** para garantizar operaciones consistentes.
+  - Importancia del **control de concurrencia** en entornos multiusuario.
+  - Relación con temas previos: modelo de datos y consultas SQL básicas/medias.
 
-**II. Transacciones y Propiedades ACID**
+---
 
-*   **Concepto de Transacción:** Conjunto de operaciones en la base de datos realizado como una unidad invisible.
-*   **Propiedades Fundamentales (ACID)**,:
-    *   **Atomicidad:** Todas las operaciones dentro de una transacción deben completarse exitosamente; si alguna falla, ninguna modificación debe reflejarse en la base de datos (principio de "todo o nada"),,.
-    *   **Consistencia:** La base de datos debe pasar de un estado válido a otro, garantizando siempre la integridad de los datos antes y después de la transacción.
-    *   **Aislamiento (Isolation):** Las transacciones deben ejecutarse de manera aislada de otras transacciones concurrentes.
-        *   Niveles de Aislamiento: Lectura de no confirmados (`Read uncommitted`), Lectura de confirmados (`Read committed`), Repetir lecturas (`Repeatable read`), y Serialización (`Serializable`),. La serialización es el nivel más alto, donde las transacciones se ejecutan como si fueran secuenciales.
-    *   **Durabilidad:** Los cambios realizados por una transacción confirmada deben persistir y no perderse, incluso si ocurre un fallo en el sistema (como un apagado del servidor),,.
+## II. Transacciones y Propiedades ACID
 
-*   **Control de Concurrencia Multiversión (MVCC)**:
-    *   Definición: Técnica que gestiona el acceso concurrente a los datos permitiendo que múltiples transacciones operen sin interferir entre sí.
-    *   Características Principales: Versionado de datos (crea nuevas versiones de registros sin sobrescribir los antiguos) y la no existencia de bloqueos de lectura.
-    *   Ventajas: Mejora la concurrencia y el rendimiento al permitir transacciones rápidas sin esperar a que otras terminen.
-    *   Implementación en PostgreSQL: Uso de marcas de tiempo de transacciones, donde cada `UPDATE` crea una nueva versión del dato. La limpieza de versiones antiguas se realiza mediante comandos `VACUUM`.
+### 1. Concepto de transacción
 
-**III. Funciones, Procedimientos Almacenados y Triggers**
+- Conjunto de operaciones que se ejecutan como una **unidad lógica**:
+  - Se confirma todo (**COMMIT**) o se deshace por completo (**ROLLBACK**).
+- Uso típico:
+  - Transferencias bancarias.
+  - Operaciones de inventario.
+  - Procesos de facturación.
 
-*   **Funciones y Procedimientos Almacenados (PL/pgSQL):** Permiten crear lógica compleja, incluyendo bucles, condicionales y manejo de excepciones, dentro de PostgreSQL.
-    *   Declaración de Funciones: Uso de `CREATE FUNCTION`, definición de parámetros y tipo de valor de retorno (`RETURNS`), y el cuerpo de la función delimitado por `BEGIN` y `END`,.
-*   **Diferencias Clave entre Funciones y Procedimientos Almacenados**,:
-    *   Retorno de Valor: Las funciones devuelven un valor directamente con `RETURN`, mientras que los procedimientos almacenados no lo hacen,.
-    *   Invocación: Las funciones se utilizan en consultas (`SELECT`), mientras que los procedimientos se ejecutan con el comando `CALL`.
-    *   Transacciones: Las funciones no pueden inicializar una transacción, pero un procedimiento almacenado sí.
-*   **Triggers (Disparadores):** Mecanismo para ejecutar automáticamente funciones definidas por el usuario antes o después de un evento en una tabla.
-    *   Eventos Capturados: `INSERT`, `UPDATE`, `DELETE`, o `TRUNCATE`.
+*(En el desarrollo del módulo se mostrarán ejemplos con `BEGIN`, `COMMIT`, `ROLLBACK`.)*
 
-**IV. Vistas y Vistas Materializadas**
+### 2. Propiedades ACID
 
-*   **Vistas Comunes:** Consultas almacenadas que actúan como tablas virtuales sin almacenar datos físicos.
-    *   Usos: Extracción, ocultación de la complejidad de la consulta (ej. convertir 1000 líneas de código en una sola), seguridad (restricción de columnas/filas sensibles), y reutilización.
-    *   Actualización: Se actualizan automáticamente, reflejando cualquier modificación en la tabla base de forma inmediata,,.
-*   **Vistas Materializadas:** Similares a las vistas comunes, pero estas sí almacenan físicamente los datos en la base de datos,.
-    *   Usos Recomendados: Necesidad de consultas rápidas con gran volumen de datos, cuando los datos no cambian frecuentemente, y para evitar cálculos costosos y repetitivos,.
-    *   Actualización: No se actualizan automáticamente cuando la tabla base cambia,. La actualización debe realizarse manualmente usando el comando `REFRESH MATERIALIZED VIEW`,,.
+- **Atomicidad**  
+  - “Todo o nada”: si una parte de la transacción falla, **no se aplica ningún cambio**.
+- **Consistencia**  
+  - La BD pasa de un **estado válido** a otro, cumpliendo todas las **restricciones** (PK, FK, CHECK, etc.).
+- **Aislamiento (Isolation)**  
+  - Las transacciones concurrentes no deben interferir de forma incorrecta entre sí.
+  - **Niveles de aislamiento**:
+    - `READ UNCOMMITTED`
+    - `READ COMMITTED` (por defecto en PostgreSQL)
+    - `REPEATABLE READ`
+    - `SERIALIZABLE` (máximo aislamiento: simula ejecución secuencial).
+- **Durabilidad**  
+  - Una vez hecho `COMMIT`, los cambios **permanecen**, incluso ante fallos del sistema o reinicios.
 
-**V. Integridad de Datos, Restricciones y Particionamiento**
+### 3. Control de Concurrencia Multiversión (MVCC)
 
-*   **Integridad de Datos:** Verificación de la consistencia en las relaciones entre tablas (ej. asegurando que tablas relacionadas contengan el mismo número de registros, si aplica),.
-*   **Verificación de Restricciones:** Inspección de las restricciones existentes (como *foreign keys*) entre tablas utilizando consultas al *information schema*,.
-*   **Particionamiento de Tablas:** Técnica utilizada para gestionar grandes volúmenes de datos.
-    *   Particionamiento por Rango (`PARTITION BY RANGE`): Creación de particiones basado en un rango de valores, como fechas,.
+- **Definición**  
+  - Técnica en la que cada transacción ve una **“fotografía lógica”** de los datos, sin bloquear lecturas.
+- **Características principales**:
+  - Versionado de filas: cada `UPDATE`/`DELETE` crea una **nueva versión**, sin sobrescribir inmediatamente.
+  - Lecturas sin bloqueos: lecturas no bloquean escrituras y viceversa (en la mayoría de casos).
+- **Ventajas**:
+  - Alta **concurrencia**.
+  - Mejor **rendimiento** bajo alta carga.
+- **Implementación en PostgreSQL**:
+  - Uso de IDs de transacción y marcas de visibilidad.
+  - Limpieza de versiones antiguas mediante `VACUUM` / `AUTOVACUUM`.
 
-**VI. Seguridad y Control de Acceso**
+---
 
-*   **Roles y Permisos:** Fundamental para manejar la seguridad y generar usuarios con acceso restringido.
-    *   Control de Acceso: PostgreSQL permite controlar el acceso desde el nivel de base de datos hasta columnas específicas.
-*   **Seguridad de Conexiones y Encriptación:** Soporte para encriptación (SSL) y la capacidad de definir métodos de autenticación,.
+## III. Funciones, Procedimientos Almacenados y Triggers
 
-**VII. Ejemplos de Consultas SQL Avanzadas**
+### 1. Funciones y procedimientos en PL/pgSQL
 
-*   **Consultas de Agregación:** Uso de funciones de agregación como `SUM` y cláusulas `GROUP BY` para obtener totales (ej. suma de precios de productos por categoría),,.
-*   **Subconsultas:** Uso de consultas internas (ej. obtener productos con precios mayores al promedio),.
+- **Funciones (`CREATE FUNCTION`)**:
+  - Permiten encapsular lógica compleja:
+    - Variables, bucles, condiciones, manejo de errores.
+  - Devuelven un **valor** (`RETURNS ...`) o un conjunto de filas (`RETURNS SETOF ...`).
+  - Se pueden invocar en:
+    - `SELECT`, `INSERT`, `UPDATE`, `DELETE`, expresiones, etc.
+- **Procedimientos (`CREATE PROCEDURE`)**:
+  - Se ejecutan con `CALL`.
+  - No devuelven un valor directo (pueden usar parámetros `IN/OUT`).
+  - Pueden **iniciar y controlar transacciones internas**.
+
+*(En el desarrollo se mostrarán ejemplos de funciones y procedimientos con `BEGIN ... END` y `EXCEPTION`.)*
+
+### 2. Diferencias clave entre funciones y procedimientos
+
+- **Retorno**:
+  - Función → siempre devuelve algo con `RETURN`.
+  - Procedimiento → no devuelve un valor directo (solo por parámetros de salida).
+- **Invocación**:
+  - Función → en una consulta (`SELECT mi_funcion(...)`).
+  - Procedimiento → con `CALL mi_procedimiento(...);`
+- **Transacciones**:
+  - Función → no puede usar `COMMIT`/`ROLLBACK` internos.
+  - Procedimiento → puede abrir/confirmar/deshacer transacciones internas.
+
+### 3. Triggers (disparadores)
+
+- **Concepto**:
+  - Mecanismos que ejecutan **automáticamente** una función cuando ocurre un evento en una tabla.
+- **Eventos soportados**:
+  - `INSERT`
+  - `UPDATE`
+  - `DELETE`
+  - `TRUNCATE`
+- **Momento de ejecución**:
+  - `BEFORE` → antes de la operación.
+  - `AFTER` → después de la operación.
+- Casos de uso:
+  - Auditoría (log de cambios).
+  - Validaciones avanzadas.
+  - Sincronización entre tablas.
+
+---
+
+## IV. Vistas y Vistas Materializadas
+
+### 1. Vistas (views) normales
+
+- **Definición**:
+  - Consultas almacenadas que se exponen como **tablas virtuales**.
+  - No almacenan datos, solo la **definición de la consulta**.
+- **Usos principales**:
+  - Simplificar consultas muy complejas.
+  - Dar una “vista lógica” según roles (seguridad, ocultar columnas).
+  - Reutilizar lógica de negocio SQL.
+- **Actualización**:
+  - Siempre muestran los **datos actuales** de las tablas base.
+
+### 2. Vistas materializadas
+
+- **Definición**:
+  - Vistas que **almacenan físicamente** el resultado de la consulta.
+- **Ventajas**:
+  - Mejoran el rendimiento en:
+    - Consultas pesadas.
+    - Agregaciones sobre grandes volúmenes.
+  - Ideales cuando los datos subyacentes **cambian poco**.
+- **Actualización**:
+  - No se actualizan automáticamente al cambiar las tablas base.
+  - Requieren `REFRESH MATERIALIZED VIEW nombre_vista;`.
+
+---
+
+## V. Integridad de Datos, Restricciones y Particionamiento
+
+### 1. Integridad de datos
+
+- Garantiza que las relaciones y reglas del modelo se cumplan:
+  - Correspondencia entre tablas relacionadas (FK).
+  - Restricciones de negocio (`CHECK`, `UNIQUE`, etc.).
+- Verificación mediante:
+  - Consultas a `information_schema` y vistas del catálogo del sistema.
+
+### 2. Restricciones (constraints) y validación
+
+- Tipos principales:
+  - `PRIMARY KEY`
+  - `FOREIGN KEY`
+  - `UNIQUE`
+  - `CHECK`
+  - `NOT NULL`
+- Revisión de restricciones existentes:
+  - Uso de `information_schema.table_constraints`, `key_column_usage`, etc.
+
+### 3. Particionamiento de tablas
+
+- **Objetivo**:
+  - Mejorar rendimiento y manejabilidad de **tablas muy grandes**.
+- **Particionamiento por rango (`PARTITION BY RANGE`)**:
+  - Dividir datos por:
+    - Rango de fechas (mensual, anual, etc.).
+    - Rango numérico.
+- Otros tipos (en el contenido extendido):
+  - Particionado por **lista**.
+  - Particionado por **hash**.
+  - Particionado **compuesto**.
+
+---
+
+## VI. Seguridad y Control de Acceso
+
+### 1. Roles y permisos
+
+- PostgreSQL usa **roles** para:
+  - Representar usuarios y grupos.
+  - Asignar permisos a múltiples usuarios de forma centralizada.
+- Alcance del control de acceso:
+  - Servidor.
+  - Base de datos.
+  - Esquema.
+  - Tabla, vista, función.
+  - Incluso **columna** (column-level privileges).
+
+*(En el desarrollo se ejemplifican `CREATE ROLE`, `GRANT`, `REVOKE`.)*
+
+### 2. Seguridad de conexiones y cifrado
+
+- Soporte para:
+  - Conexiones cifradas mediante **SSL/TLS**.
+  - Diferentes métodos de autenticación (`md5`, `scram-sha-256`, certificados, LDAP, etc.).
+- Configuración en:
+  - `pg_hba.conf` → reglas de acceso.
+  - `postgresql.conf` → parámetros de SSL y seguridad.
+
+---
+
+## VII. Ejemplos de Consultas SQL Avanzadas
+
+### 1. Consultas de agregación
+
+- Uso de funciones:
+  - `SUM`, `COUNT`, `AVG`, `MIN`, `MAX`.
+- Combinación con `GROUP BY` y `HAVING` para:
+  - Totales por categoría (ej. suma de precios por categoría).
+  - Indicadores de negocio: ventas por cliente, por mes, etc.
+
+### 2. Subconsultas y patrones avanzados
+
+- **Subconsultas en `WHERE` y `FROM`**:
+  - Ejemplo: productos con precio mayor al **promedio** de su categoría.
+- Patrones:
+  - Subconsultas correlacionadas.
+  - Subconsultas para filtros complejos.
+  - Combinación con CTEs para mayor legibilidad.
+
+*(A lo largo del módulo se incluirán ejemplos de código SQL reales para cada uno de estos patrones.)*

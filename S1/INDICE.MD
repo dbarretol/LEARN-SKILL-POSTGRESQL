@@ -1,113 +1,237 @@
-Este es un esquema de títulos y subtítulos basado en el contenido del documento proporcionado, cubriendo la introducción, configuración, conceptos avanzados y demostraciones prácticas de PostgreSQL:
+# Índice General del Curso de PostgreSQL
 
 ## I. Introducción a PostgreSQL y Fundamentos de Bases de Datos
 
-### A. Conceptos básicos y roles
-*   Introducción al módulo de gestión de bases de datos usando PostgreSQL.
-*   Definición de base de datos como un conjunto de datos almacenados que se pueden consultar fácilmente.
-*   PostgreSQL como parte de un Sistema de Gestión de Base de Datos (SGDB) que permite administrar y consultar bases de datos.
+### A. Conceptos básicos
+- ¿Qué es una **base de datos**?
+- ¿Qué es un **SGBD** (Sistema de Gestión de Bases de Datos)?
+- PostgreSQL como **ORDBMS** (sistema de base de datos relacional de objetos).
+- Rol de PostgreSQL dentro de una arquitectura de aplicaciones.
 
-### B. Componentes fundamentales de Bases de Datos
-*   **Tabla:** Estructura que almacena datos en filas y columnas.
-*   **Campos o Columnas:** Atributos de la tabla donde se define el tipo de datos.
-*   **Registro o Filas:** Conjunto de datos relacionados que forman una fila en una tabla.
-*   **Clave Primaria (Primary Key):** Combinación de campos que identifica unívocamente a cada registro.
-*   **Claves Foráneas (Foreign Keys):** Campos que hacen referencia a la clave primaria de otra tabla para establecer relaciones.
-*   **Consultas (Queries):** Instrucciones para buscar, actualizar, insertar, agregar o eliminar registros.
-*   **Lenguaje SQL:** PostgreSQL utiliza el lenguaje estándar SQL, que es manejado por la mayoría de los gestores de bases de datos.
-*   **Lenguaje de Programación:** PostgreSQL maneja su propio lenguaje, PL/pgSQL (LP Podre).
+### B. Componentes fundamentales de una base de datos relacional
+- **Tablas**: estructura básica de almacenamiento (filas y columnas).
+- **Campos o columnas**: definición de atributos y tipos de datos.
+- **Registros o filas**: conjunto coherente de datos en una tabla.
+- **Clave primaria (Primary Key)**:
+  - Identificación única de cada registro.
+  - Restricciones típicas: `PRIMARY KEY`, `UNIQUE`, `NOT NULL`.
+- **Clave foránea (Foreign Key)**:
+  - Referencias entre tablas.
+  - Integridad referencial.
+- **Consultas (queries)**:
+  - Operaciones básicas: `SELECT`, `INSERT`, `UPDATE`, `DELETE`.
+- **Lenguaje SQL**:
+  - Lenguaje estándar para definición y manipulación de datos.
+- **Lenguaje PL/pgSQL**:
+  - Lenguaje procedural específico de PostgreSQL.
+  - Uso en funciones, procedimientos y triggers.
 
-### C. Conceptos Avanzados de Gestión de Datos
-*   **Relación:** Vínculo lógico entre tablas utilizado para mantener la integridad de los datos, apoyado por claves foráneas.
-*   **Índices:** Estructura que mejora la velocidad de las consultas sobre una o más columnas.
-*   **Normalización:** Proceso de organizar los datos para reducir redundancias y dependencias.
-*   **Transacción:** Conjunto de operaciones que se ejecutan como una unidad invisible.
-*   **Backups:** Copias de seguridad de la base de datos para recuperación ante cualquier fallo.
+### C. Conceptos avanzados de gestión de datos
+- **Relaciones entre tablas**:
+  - Tipos de relaciones (1:1, 1:N, N:M).
+  - Uso de joins (`INNER JOIN`, `LEFT JOIN`, etc.).
+- **Índices**:
+  - Objetivo y beneficios.
+  - Impacto en rendimiento de lectura y escritura.
+- **Normalización**:
+  - Reducción de redundancia y mejora de integridad.
+  - Formas normales (visión general).
+- **Transacciones**:
+  - Concepto de unidad atómica “todo o nada”.
+  - Propiedades ACID (Atomicidad, Consistencia, Aislamiento, Durabilidad).
+- **Backups**:
+  - Importancia de las copias de seguridad.
+  - Visión general de métodos de backup y restauración.
+
+---
 
 ## II. Comparación de Gestores de Bases de Datos (PostgreSQL, SQL Server, MySQL)
 
-### A. Aspectos de Licencia y Desarrollo
-*   **Licencia:** PostgreSQL es Open Source (licencia libre), MySQL es Open Source con opciones comerciales, y SQL Server es propietario de Microsoft y cobra un costo.
-*   **Desarrolladores:** PostgreSQL es desarrollado por Postgre Global Development Group; SQL Server por Microsoft; y MySQL por Oracle Corporation.
+### A. Aspectos de licencia y desarrollo
+- **PostgreSQL**:
+  - Open Source (licencia PostgreSQL, muy permisiva).
+  - Desarrollado por PostgreSQL Global Development Group.
+- **SQL Server**:
+  - Producto propietario de Microsoft.
+  - Licenciamiento por núcleo/CAL según edición.
+- **MySQL**:
+  - Open Source (GPL) con ediciones comerciales.
+  - Desarrollado por Oracle Corporation.
 
-### B. Características Técnicas
-*   **Modelo de Datos:** PostgreSQL es relacional con soporte completo de objetos, mientras que SQL Server y MySQL son relacionales.
-*   **Soporte JSON y NoSQL:** PostgreSQL tiene soporte avanzado con consultas, índices y funciones JSON, mientras que SQL Server es limitado pero funcional, y MySQL tiene soporte básico y menos eficiente.
-*   **Rendimiento:** PostgreSQL es muy bueno para consultas complejas y rendimiento de escritura; SQL Server es excelente en entornos corporativos; y MySQL es muy rápido para lecturas simples.
-*   **Escalabilidad:** PostgreSQL es muy buena para escalabilidad horizontal y vertical; SQL Server tiene alta escalabilidad vertical; y MySQL tiene escalabilidad moderada.
-*   **Transacciones ACID:** Completo en PostgreSQL, SQL Server y MySQL (aunque MySQL depende del motor de almacenamiento).
-*   **Índices Avanzados:** PostgreSQL utiliza índices avanzados como GIS, GIN y BRM.
-*   **Particionado de Tablas:** Soportado por PostgreSQL (desde versiones actuales), eficiente y maduro en SQL Server, y limitado en MySQL.
-*   **Seguridad:** PostgreSQL ofrece seguridad robusta con roles y políticas de autenticación; SQL Server es más robusta con integración con Active Directory; y MySQL tiene seguridad básica.
-*   **Uso Ideal:** PostgreSQL es ideal para aplicaciones complejas, análisis y GIS; SQL Server para grandes empresas; y MySQL para aplicaciones web ligeras.
+### B. Características técnicas comparadas
+- **Modelo de datos**:
+  - PostgreSQL: objeto-relacional (ORDBMS).
+  - SQL Server y MySQL: relacionales.
+- **Soporte JSON / NoSQL ligero**:
+  - PostgreSQL: `JSON` / `JSONB`, índices GIN, funciones avanzadas.
+  - SQL Server: soporte funcional de JSON vía T‑SQL.
+  - MySQL: tipo `JSON`, soporte intermedio.
+- **Rendimiento**:
+  - PostgreSQL: fuerte en consultas complejas y escrituras con alta concurrencia.
+  - SQL Server: excelente en entornos corporativos bien dimensionados.
+  - MySQL: muy rápido en lecturas simples y patrones típicos web.
+- **Escalabilidad**:
+  - PostgreSQL: buena escalabilidad vertical y horizontal (replicación, particionado).
+  - SQL Server: gran escalabilidad vertical; opciones de HA/DR empresariales.
+  - MySQL: escalabilidad moderada, comúnmente usada con réplicas de lectura.
+- **Transacciones ACID**:
+  - PostgreSQL, SQL Server: soporte completo.
+  - MySQL: depende del motor de almacenamiento (InnoDB recomendado).
+- **Índices avanzados**:
+  - PostgreSQL: GIN, GiST, BRIN, índices parciales, multicolumna, por expresión.
+  - SQL Server: B‑Tree, Columnstore, índices filtrados.
+  - MySQL: principalmente B‑Tree, otros tipos más limitados.
+- **Particionado de tablas**:
+  - PostgreSQL: particionado nativo (RANGE, LIST, HASH).
+  - SQL Server: particionado maduro y bien integrado.
+  - MySQL: particionado disponible con mayor complejidad y restricciones.
+- **Seguridad**:
+  - PostgreSQL: roles granulares, políticas de fila (RLS), autenticación flexible.
+  - SQL Server: integración nativa con Active Directory y herramientas de gobierno.
+  - MySQL: seguridad adecuada, menos sofisticada en entornos de gran gobernanza.
+- **Uso ideal**:
+  - PostgreSQL: aplicaciones complejas, analítica, GIS, finanzas.
+  - SQL Server: grandes empresas en entorno Microsoft.
+  - MySQL: aplicaciones web ligeras/medias, CMS, hosting compartido.
+
+---
 
 ## III. Tipos de Datos en PostgreSQL
 
-### A. Tipos Numéricos
-*   **INTEGER, SMALLINT, BIGINT:** Para números enteros de diferentes tamaños.
-*   **DECIMAL y NUMERIC:** Para números decimales con precisión exacta, siendo `NUMERIC` de mayor precisión.
-*   **REAL y DOUBLE PRECISION:** Números de punto flotante de precisión simple (4 bytes) y doble (8 bytes), respectivamente.
+### A. Tipos numéricos
+- `SMALLINT`, `INTEGER`, `BIGINT`: enteros de distinto rango.
+- `DECIMAL(p, s)` / `NUMERIC(p, s)`: decimales de precisión exacta (ej. montos).
+- `REAL`, `DOUBLE PRECISION`: números en punto flotante (precisión simple y doble).
 
-### B. Tipos de Cadena de Texto
-*   **VARCHAR(n):** Cadena de texto de longitud variable con un límite de *n* caracteres.
-*   **CHAR(n):** Cadena de texto de longitud fija de *n* caracteres.
-*   **TEXT:** Cadenas de texto sin límites de longitud, ideal para texto largo (incluyendo JSON).
+### B. Tipos de texto
+- `VARCHAR(n)`: longitud variable con límite máximo.
+- `CHAR(n)`: longitud fija.
+- `TEXT`: longitud prácticamente ilimitada (ideal para descripciones largas).
 
-### C. Tipos Lógicos, de Fecha y Avanzados
-*   **BOOLEAN:** Representación de valores de verdad (True, False, Null).
-*   **Tipos de Fecha y Hora:** DATE (año, mes, día), TIME (hora sin fecha), TIMESTAMP WITHOUT TIME ZONE (fecha y hora sin zona horaria), TIMESTAMP WITH TIME ZONE (fecha y hora con zona horaria) e INTERVAL (periodo de tiempo/duración).
-*   **JSON y JSONB:** `JSON` almacena datos JSON como texto; `JSONB` almacena datos en formato binario, siendo más eficiente para búsquedas y operaciones (tipo propio de PGRE).
-*   **ARRAY:** Permite almacenar una lista de valores del mismo tipo.
-*   **HSTORE:** Almacena un conjunto de pares clave-valor en un solo campo.
+### C. Tipos lógicos, de fecha y avanzados
+- **Lógico**:
+  - `BOOLEAN`: `TRUE`, `FALSE`, `NULL`.
+- **Fecha y hora**:
+  - `DATE`, `TIME`, `TIMESTAMP`, `TIMESTAMPTZ` (con zona horaria), `INTERVAL`.
+- **Tipos estructurados / NoSQL**:
+  - `JSON` y `JSONB`: almacenamiento de documentos JSON.
+  - `ARRAY`: arrays de valores (`integer[]`, `text[]`, etc.).
+  - `HSTORE`: pares clave–valor en una sola columna.
 
-## IV. Instalación y Configuración del Servidor
+*(En el desarrollo del contenido se incluyen ejemplos de creación de tablas usando estos tipos.)*
 
-### A. Proceso de Instalación
-*   PostgreSQL puede ser instalado en Windows (instalador oficial), Linux (mediante repositorios o Docker) y Mac (Open System o instalador oficial).
-*   Pasos de configuración inicial: Abrir PGAdmin, crear conexión, crear base de datos, crear rol de usuario, y ejecutar consultas usando el Query Tool.
-*   El puerto por defecto utilizado es el 5432.
+---
 
-### B. Herramientas de Interacción
-*   **PG Admin (versión 4):** Interfaz gráfica para administrar PostgreSQL, funcional desde el navegador web.
-*   **PSQL (PG SQL):** Consola de comandos para interactuar con PostgreSQL.
+## IV. Instalación y Configuración del Servidor PostgreSQL
 
-### C. Primeros Pasos y Comandos Básicos
-*   La ejecución de consultas se realiza mediante el Query Tool.
-*   Comandos SQL básicos: `SELECT` (recuperar datos), `INSERT` (insertar nuevos registros), `UPDATE` (modificar datos existentes), `DELETE` (eliminar registros existentes).
-*   Visualización de bases de datos predeterminadas (`postgres`, `template 1`, `template 0`).
+### A. Proceso de instalación
+- Instalación en:
+  - **Windows**: instalador oficial.
+  - **Linux**: repositorios de la distribución (`apt`, `yum`, etc.) o Docker.
+  - **macOS**: Homebrew o instalador oficial.
+- Configuración inicial:
+  - Puesto por defecto: `5432`.
+  - Creación y prueba de conexión inicial.
+  - Verificación del servicio.
+
+### B. Herramientas de interacción
+- **pgAdmin 4**:
+  - Administración gráfica desde navegador.
+  - Creación de servidores, bases de datos, esquemas, tablas y roles.
+- **psql**:
+  - Consola oficial de PostgreSQL.
+  - Ejecución de sentencias SQL y comandos internos (`\l`, `\dt`, etc.).
+
+### C. Primeros pasos y comandos básicos
+- Uso del **Query Tool** en pgAdmin.
+- Manipulación de datos con SQL:
+  - `SELECT`, `INSERT`, `UPDATE`, `DELETE`.
+- Consulta de bases de datos predeterminadas:
+  - `postgres`, `template1`, `template0`.
+
+*(Ejemplos incluidos: creación de tabla sencilla, inserción y consulta básica.)*
+
+---
 
 ## V. Creación de Bases de Datos y Esquemas
 
-### A. Creación y Eliminación de Bases de Datos
-*   Creación de una base de datos de ejemplo (`tienda DB`).
-*   Manejo de conexiones activas para poder eliminar bases de datos (`DROP DATABASE`), utilizando consultas a la vista del sistema `PG_STAT_ACTIVITY` para terminar procesos.
-*   Creación de bases de datos de forma correcta especificando el propietario (`OWNER`), codificación (`UTF8`), límites de conexión y la plantilla (`TEMPLATE 0`).
+### A. Creación y eliminación de bases de datos
+- Creación de bases de datos de ejemplo (`tienda_db`):
+  - `CREATE DATABASE tienda_db WITH OWNER = ... ENCODING = 'UTF8' TEMPLATE = template0;`
+- Eliminación de bases de datos (`DROP DATABASE`):
+  - Manejo de conexiones activas con `pg_stat_activity`.
+  - Uso de `pg_terminate_backend()` antes de `DROP DATABASE`.
 
-### B. Definición de Esquemas
-*   Conexión a la base de datos recién creada.
-*   Creación de un esquema propio utilizando `CREATE SCHEMA IF NOT EXISTS`.
-*   Definición del esquema por defecto para evitar prefijar las tablas (ej. `SET search_path TO tienda`).
+### B. Definición y uso de esquemas
+- Esquema por defecto: `public`.
+- Buenas prácticas:
+  - Crear esquemas propios (`CREATE SCHEMA IF NOT EXISTS tienda;`).
+  - Separación lógica por módulos o dominios.
+- Configuración de `search_path`:
+  - `SET search_path TO tienda;`
+  - Ajuste persistente con `ALTER ROLE` / `ALTER DATABASE`.
+
+---
 
 ## VI. Creación de Tablas con Características Avanzadas
 
-### A. Extensiones y Generación de IDs Únicos
-*   Uso de extensiones para generar códigos únicos de IDs (como UUID - Identificador Único Universal).
-*   La extensión UUID genera un identificador de 128 bytes, único a nivel mundial, evitando la duplicación de claves.
-*   Creación de una función para generar texto aleatorio (`random_string`).
+### A. Extensiones y generación de IDs únicos
+- Uso de extensiones:
+  - `uuid-ossp` o `pgcrypto` para generar UUIDs (`uuid_generate_v4()`, `gen_random_uuid()`).
+- Ventajas de `UUID` frente a `SERIAL`/`BIGSERIAL`:
+  - Unicidad global.
+  - Ocultación del orden real de inserción.
+- Función de utilidad `random_string` en PL/pgSQL para generar textos aleatorios.
 
-### B. Definición de la Tabla de Usuarios
-*   Creación de la tabla `usuario` con `UUID` como clave primaria.
-*   Uso de `DEFAULT uuid_generate_v4()` para generar IDs de forma aleatoria.
-*   Validación de datos: Uso de `NOT NULL`, `UNIQUE` (para email), y `CHECK` constraints (para validar el formato del email y el estado).
-*   Uso de tipos de datos de fecha y hora para registro de creación y último *login* (TIMESTAMP WITH TIME ZONE).
+*(Se incluye código de ejemplo para `CREATE EXTENSION`, definición de tablas con UUID y funciones auxiliares.)*
 
-### C. Tipos Personalizados (ENUM)
-*   Alternativa para gestionar estados: Creación de un tipo personalizado (`CREATE TYPE AS ENUM`) para definir un conjunto de estados posibles (activo, inactivo, suspendido).
+### B. Definición de la tabla de usuarios
+- Tabla `usuario`:
+  - `usuario_id` como `UUID PRIMARY KEY` con `DEFAULT uuid_generate_v4()` o `gen_random_uuid()`.
+  - Campos típicos: `nombres`, `apellidos`, `email`, `password`, `estado`, `fecha_creacion`, `ultimo_login`, `es_admin`.
+- Validaciones (`constraints`):
+  - `NOT NULL` y `UNIQUE` (ej. email).
+  - `CHECK` para:
+    - Validar formato de email (expresiones regulares).
+    - Restringir valores de `estado`.
+
+### C. Tipos personalizados (`ENUM`)
+- Creación de tipos enumerados:
+  - `CREATE TYPE estado_de_usuario AS ENUM ('activo', 'inactivo', 'suspendido');`
+- Uso de `ENUM` en la tabla `usuario`:
+  - Columna `estado` tipada como `estado_de_usuario`.
+- Ventajas:
+  - Mayor claridad semántica.
+  - Menos errores de escritura en valores de estado.
+
+---
 
 ## VII. Inserción de Registros de Forma Aleatoria
 
-*   Uso de la sentencia `INSERT INTO` combinada con `SELECT` para la inserción masiva.
-*   Uso de `generate_series(1, 100)` para generar 100 registros de prueba.
-*   Generación de nombres, apellidos y correos electrónicos aleatorios mediante concatenación y variables.
-*   Generación de contraseñas mediante funciones de cifrado (como MD5) junto con números aleatorios.
-*   Generación de datos variables para campos como teléfono y dirección usando estructuras `CASE WHEN`.
+### A. Inserción masiva con `INSERT INTO ... SELECT`
+- Generación de datos de prueba usando:
+  - `INSERT INTO ... SELECT`.
+  - `generate_series(1, N)` para producir N filas.
+- Ejemplo básico:
+  - Inserción de 100 usuarios de prueba en la tabla `usuario`.
+
+### B. Generación de datos aleatorios y patrones
+- Construcción de nombres, apellidos y correos:
+  - Concatenación de texto con el índice `i` (`'nombre_' || i`).
+- Generación de contraseñas:
+  - `MD5(random()::TEXT)` como hash de contraseña de prueba.
+- Campos con lógica condicional:
+  - Uso de `CASE WHEN` y operador módulo (`%`) para:
+    - Asignar teléfonos según patrones.
+    - Marcar ciertos usuarios como administradores (`es_admin`) de forma proporcional.
+
+### C. Verificación y reutilización
+- Verificación de los datos insertados:
+  - `SELECT * FROM usuario;`
+  - Conteos y agrupaciones de prueba.
+- Limpieza para nuevas pruebas:
+  - `TRUNCATE TABLE usuario RESTART IDENTITY;` (según diseño de la PK).
+
+---
+
+> Este índice sirve como guía estructurada para el documento completo del curso, abarcando desde los fundamentos de PostgreSQL hasta técnicas avanzadas de modelado, validación y generación de datos de prueba.
